@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JobGuard — Fake Job Detector</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Animated background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <div class="page-wrapper">
+
+    <!-- ── HEADER ── -->
+    <header class="site-header">
+      <div class="logo">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">Job<span class="accent">Guard</span></span>
+      </div>
+      <p class="tagline">AI-powered fraud detection for job seekers</p>
+    </header>
+
+    <!-- ── MAIN CARD ── -->
+    <main class="card">
+
+      <div class="card-header">
+        <h1 class="card-title">Analyze a Job Posting</h1>
+        <p class="card-subtitle">Paste the job title, description, requirements, or any details below. Our model will tell you if it looks suspicious.</p>
+      </div>
+
+      <!-- ── FORM ── -->
+      <form action="/predict" method="POST" class="predict-form">
+        <div class="textarea-wrapper">
+          <textarea
+            name="jobdesc"
+            id="jobdesc"
+            rows="8"
+            placeholder="Paste the job description here…&#10;&#10;Example: 'Work from home, earn $5000/week, no experience needed, send your bank details to apply.'"
+            required
+          ></textarea>
+          <span class="textarea-label">Job Description</span>
+        </div>
+
+        <button type="submit" class="btn-analyze">
+          <span class="btn-text">Analyze Now</span>
+          <span class="btn-icon">→</span>
+        </button>
+      </form>
+
+      <!-- ── RESULT ── -->
+      {% if prediction_text %}
+      <div class="result-wrapper {% if 'Fake' in prediction_text %}result-fake{% else %}result-real{% endif %}">
+
+        <div class="result-icon">
+          {% if 'Fake' in prediction_text %}⚠️{% else %}✅{% endif %}
+        </div>
+
+        <div class="result-content">
+          <p class="result-label">Detection Result</p>
+          <h2 class="result-verdict">{{ prediction_text }}</h2>
+
+          {% if confidence %}
+          <div class="confidence-bar-container">
+            <div class="confidence-labels">
+              <span>Confidence</span>
+              <span class="confidence-pct">{{ confidence }}%</span>
+            </div>
+            <div class="confidence-bar-track">
+              <div class="confidence-bar-fill" style="width: {{ confidence }}%;"></div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if 'Fake' in prediction_text %}
+          <p class="result-advice">🚨 <strong>Be cautious.</strong> This posting shows signs commonly found in fraudulent listings — such as vague requirements, requests for personal/financial info, or unrealistic salary promises.</p>
+          {% else %}
+          <p class="result-advice">✔️ <strong>Looks legitimate.</strong> This posting matches patterns of genuine job listings. Still, always verify the company independently before sharing personal information.</p>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endif %}
+
+    </main>
+
+    <!-- ── HOW IT WORKS ── -->
+    <section class="info-section">
+      <h3 class="info-title">How It Works</h3>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-num">01</div>
+          <h4>Paste Job Text</h4>
+          <p>Enter any combination of job title, description, requirements, or benefits.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-num">02</div>
+          <h4>NLP Analysis</h4>
+          <p>Our TF-IDF model scans for linguistic patterns — phrases, tone, and keyword signals linked to fraud.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-num">03</div>
+          <h4>Instant Verdict</h4>
+          <p>Get a Real or Fake classification with a confidence score in under a second.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="site-footer">
+      <p>Built with 🧠 Machine Learning · <span class="accent">ADS-599B Capstone</span> · University of San Diego</p>
+    </footer>
+
+  </div><!-- /page-wrapper -->
+
+</body>
+</html>
